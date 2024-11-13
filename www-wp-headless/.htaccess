@@ -1,0 +1,72 @@
+
+# BEGIN WordPress
+# Directives (lines) between `BEGIN WordPress` and `END WordPress`
+# are generated automatically and should only be modified through WordPress filters.
+# Manually made changes between these markers will be overwritten.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
+
+# Protect wp-login.php and wp-admin
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# Allow access to admin-ajax.php
+RewriteCond %{REQUEST_URI} !^/wp-admin/admin-ajax\.php
+
+# Allow access to API if needed
+RewriteCond %{REQUEST_URI} !^/wp-json/
+
+# Block direct access to wp-login.php
+RewriteCond %{REQUEST_URI} ^/wp-login\.php
+RewriteRule ^(.*)$ - [R=403,L]
+
+# Block direct access to wp-admin for unauthorized users
+RewriteCond %{REQUEST_URI} ^/wp-admin
+RewriteCond %{HTTP_COOKIE} !wordpress_logged_in_ [NC]
+RewriteRule ^(.*)$ - [R=403,L]
+</IfModule>
+
+# Additional protection for directories
+<FilesMatch "wp-login\.php">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Protect against directory viewing
+Options -Indexes
+
+# Protect wp-config.php
+<Files wp-config.php>
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-Content-Type-Options "nosniff"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    
+    # Only for HTTPS
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+# Protection against attacks via User Agent
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+    RewriteCond %{HTTP_USER_AGENT} ^(java|curl|wget) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (winhttp|HTTrack|clshttp|archiver|loader|email|harvest|extract|grab|miner) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} (libwww-perl|curl|wget|python|nikto|scan) [NC]
+    RewriteRule ^ - [F,L]
+</IfModule>
