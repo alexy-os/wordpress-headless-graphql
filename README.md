@@ -36,12 +36,6 @@ A minimal WordPress theme designed to work as a headless CMS with GraphQL suppor
 - Disabled directory browsing
 - Protected sensitive files
 
-### Headless Mode
-- Disabled frontend rendering
-- Optimized for GraphQL content delivery with field restrictions
-- Minimal theme structure
-- Cleaned up WordPress head and removed unnecessary features
-
 ### GraphQL Integration
 - Configured for WPGraphQL with MYGraphQL extension
 - Selective field exposure for optimal data transfer
