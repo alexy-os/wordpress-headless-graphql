@@ -63,7 +63,7 @@ if (!isset($_GET['login'])) {
     
     // Save the hash in a transient with attempt limit
     set_transient('login_hash_' . $hash, [
-        'attempts' => 3,
+        'attempts' => 4,
         'ip' => $_SERVER['REMOTE_ADDR']
     ], 30 * MINUTE_IN_SECONDS);
 
@@ -71,7 +71,87 @@ if (!isset($_GET['login'])) {
     
     // Show the temporary link
     $login_url = add_query_arg('login', $hash, home_url('/console'));
-    wp_die("Your temporary login link: <br><br>" . esc_url($login_url) . "<br><br>Link is valid for 30 minutes and 3 login attempts.");
+    
+    // New Tailwind styled page
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Console Login</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            border: "hsl(var(--border))",
+                            input: "hsl(var(--input))",
+                            background: "hsl(var(--background))",
+                        }
+                    }
+                }
+            }
+
+            // Dark theme check
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark')
+            }
+        </script>
+    </head>
+    <body class="h-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Console Access</h2>
+                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Generate temporary login link</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <button 
+                            onclick="window.location.href='<?php echo esc_url($login_url); ?>'"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
+                            bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
+                            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            Get Login Link
+                        </button>
+                        
+                        <div class="text-sm text-gray-600 dark:text-gray-400 text-center">
+                            Link will be valid for 30 minutes with 3 login attempts
+                        </div>
+                    </div>
+                </div>
+                <!--   Theme switcher -->
+                <div class="text-center">
+                    <button 
+                        onclick="toggleTheme()"
+                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                    >
+                        Toggle theme
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark')
+                localStorage.theme = 'light'
+            } else {
+                document.documentElement.classList.add('dark')
+                localStorage.theme = 'dark'
+            }
+        }
+    </script>
+    </body>
+    </html>
+    <?php
+    exit;
 }
 
 // Check the hash and attempts
@@ -153,8 +233,7 @@ if (isset($_POST['login-form'])) {
         log_access_attempt('login_failed', $hash);
     }
 }
-?>
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
@@ -245,7 +324,10 @@ if (isset($_POST['login-form'])) {
             Sign in
         </button>
     </div>
-</form>
+<div class="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
+                    Remaining attempts: <?php echo $hash_data['attempts'] + 1; ?>
+                </div>      
+            </form>
             </div>
 
             <!--   Theme switcher -->

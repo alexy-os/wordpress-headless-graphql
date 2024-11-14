@@ -12,30 +12,43 @@ function protect_admin_access() {
         return;
     }
 
-    // Get the current URL
     $current_url = $_SERVER['REQUEST_URI'];
     
-    // Allow access for authorized users
     if (is_user_logged_in()) {
         return;
     }
 
-    // List of allowed URLs
-    $allowed_urls = array(
-        '/wp-admin/admin-ajax.php',
-        '/wp-json/',
-        '/console/',
-        '/graphql'
-    );
+    // Attempt to get URLs from the configuration file
+    $allowed_urls = [];
+    $config_file = get_template_directory() . '/admin/config/settings.php';
+    if (file_exists($config_file)) {
+        $config = include $config_file;
+        if (isset($config['allowed_urls']) && is_array($config['allowed_urls'])) {
+            $allowed_urls = $config['allowed_urls'];
+        }
+    }
+    
+    // If URLs are not found in the config, try to get them from options
+    if (empty($allowed_urls)) {
+        $allowed_urls = get_option('allowed_urls');
+    }
+    
+    // If URLs are still not found, use default values
+    if (empty($allowed_urls)) {
+        $allowed_urls = [
+            '/wp-admin/admin-ajax.php',
+            '/wp-json/',
+            '/console/',
+            '/graphql'
+        ];
+    }
 
-    // Check if the URL is not allowed
     foreach ($allowed_urls as $allowed_url) {
         if (strpos($current_url, $allowed_url) !== false) {
             return;
         }
     }
     
-    // Block access to wp-admin and wp-login.php
     if (strpos($current_url, '/wp-admin') !== false || 
         strpos($current_url, 'wp-login.php') !== false) {
         wp_redirect(home_url('/'));

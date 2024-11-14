@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Admin init
+ * 
+ * Initialize the admin area.
+ * 
+ * @package Headless Theme
+ */
+
+// Admin init
+require_once get_template_directory() . '/admin/init.php';
+
+// Initialize the admin area
+add_action('init', function() {
+    new HeadlessTheme\Admin\AdminInit();
+});
+
 /** 
  * GraphQL post types
  * 
@@ -36,8 +52,8 @@ add_filter('register_post_type_args', function($args, $post_type) {
  * @package Headless Theme
  */
 
-// Admin access
-require_once get_template_directory() . '/admin-access.php';
+// Admin access authorized
+require_once get_template_directory() . '/inc/authorized.php';
 
 // Safety functions
-require_once get_template_directory() . '/safety-functions.php';
+require_once get_template_directory() . '/inc/security.php';
