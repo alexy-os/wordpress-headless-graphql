@@ -16,15 +16,23 @@ add_action('init', function() {
     new HeadlessTheme\Admin\AdminInit();
 });
 
+// Add theme support for post thumbnails
+add_action('after_setup_theme', function() {
+    add_theme_support('post-thumbnails');
+});
+
 /** 
- * GraphQL post types
+ * GraphQL restricted post types
+ * 
+ * This is a simple example. Please note the My GraphQL Plugin
+ * available in the adjacent directory plugins/mygraphql
  * 
  * Correct way to disable post types in GraphQL
  * 
  * @package Headless Theme
  */ 
 
-// Add filter to register post type args
+/* // Add filter to register post type args
 add_filter('register_post_type_args', function($args, $post_type) {
     // Check the post type
     switch ($post_type) {
@@ -43,6 +51,7 @@ add_filter('register_post_type_args', function($args, $post_type) {
     
     return $args;
 }, 10, 2);
+*/
 
 /**
  * Admin access

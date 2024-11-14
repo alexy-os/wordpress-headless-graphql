@@ -36,18 +36,25 @@ A minimal WordPress theme designed to work as a headless CMS with GraphQL suppor
 - Disabled directory browsing
 - Protected sensitive files
 
+### Headless Mode
+- Disabled frontend rendering
+- Optimized for GraphQL content delivery with field restrictions
+- Minimal theme structure
+- Cleaned up WordPress head and removed unnecessary features
+
 ### GraphQL Integration
-- Configured for WPGraphQL
-- Custom post type handling
-- Structured content delivery
+- Configured for WPGraphQL with MYGraphQL extension
+- Selective field exposure for optimal data transfer
+- Custom post type handling with meta fields control
+- Structured content delivery with caching
 - API endpoint protection
 
 ## Installation
 
-1. Clone this repository to your WordPress themes directory:
+1. Clone this repository to your server:
 ```bash
-cd wp-content/themes
-git clone [repository-url] headless-theme
+cd /www
+git clone [repository-url] .
 ```
 
 2. Add the following constants to your wp-config.php:
@@ -79,7 +86,7 @@ define('DISALLOW_FILE_MODS', true);
 3. Use the link within 30 minutes
 4. Login with your WordPress credentials
 
-### GraphQL Queries
+### GraphQL simple queries
 The GraphQL endpoint is available at `/graphql`. Example query:
 ```graphql
 query GetPosts {
@@ -93,6 +100,40 @@ query GetPosts {
 }
 ```
 
+### GraphQL Usage with Field Restrictions
+
+The GraphQL endpoint is available at `/graphql`. Example optimized query with controlled field exposure:
+
+```graphql
+{
+  pages(first: 10) {
+    nodes {
+      id
+      title
+      featuredImage {
+        node {
+          id
+          sourceUrl
+          altText
+        }
+      }
+      # Only exposed meta fields will be available
+      pageFields {
+        key
+        value
+      }
+    }
+  }
+}
+```
+
+### Field Control
+The MYGraphQL plugin allows you to:
+- Explicitly define which meta fields are exposed
+- Cache frequently accessed data
+- Control featured image exposure
+- Implement type-specific field restrictions
+
 ### Security Features
 - Rate limiting is implemented at both IP and attempt levels
 - All login attempts are logged in `/console/access.log`
@@ -101,14 +142,16 @@ query GetPosts {
 
 ## File Structure
 ```
-headless-theme/
-├── console/
-│   └── index.php          # Custom login implementation
-├── admin-access.php       # Admin protection logic
-├── functions.php          # Theme functionality
-├── safety-functions.php   # Security implementations
-├── index.php             # Minimal frontend
-└── style.css             # Theme declaration
+www/
+│── console/
+│   └── index.php      # Custom login implementation
+├── wp-content/
+│   ├── themes/
+│   │   └── headless-theme/       # Headless Theme
+│   └── plugins/
+│       └── mygraphql/            # GraphQL field control plugin
+├── wp-config.php
+└── .htaccess
 ```
 
 ## Contributing
