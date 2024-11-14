@@ -10,9 +10,7 @@ class PostType extends AbstractGraphQLType {
         return [
             'show_in_graphql' => true,
             'graphql_single_name' => 'post',
-            'graphql_plural_name' => 'posts',
-            'allowed_meta_fields' => ['author_bio', 'featured_video'],
-            'cache_ttl' => 1800
+            'graphql_plural_name' => 'posts'
         ];
     }
     
@@ -20,11 +18,29 @@ class PostType extends AbstractGraphQLType {
         register_graphql_field($this->typeName, 'postFields', [
             'type' => ['list_of' => 'PostMetaField'],
             'description' => 'All custom fields for this post',
-            'resolve' => [$this, 'resolveMetaFields']
+            'resolve' => function($post) {
+                if (empty($post->ID)) {
+                    return [];
+                }
+                
+                $meta = get_post_meta($post->ID);
+                $result = [];
+                
+                foreach ($meta as $key => $values) {
+                    if (strpos($key, '_') === 0) {
+                        continue;
+                    }
+                    
+                    foreach ($values as $value) {
+                        $result[] = [
+                            'key' => $key,
+                            'value' => maybe_unserialize($value)
+                        ];
+                    }
+                }
+                
+                return $result;
+            }
         ]);
-    }
-    
-    protected function resolveCustomField($post) {
-        return 'custom value';
     }
 }

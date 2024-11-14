@@ -31,18 +31,21 @@ abstract class AbstractGraphQLType {
     }
     
     protected function resolveMetaFields($post): array {
-        $cache_key = "graphql_meta_{$this->typeName}_{$post->ID}";
-        $cached = wp_cache_get($cache_key);
-        
-        if ($cached !== false) {
-            return $cached;
+        if (empty($post->ID)) {
+            error_log("Post ID is empty in resolveMetaFields");
+            return [];
         }
-        
+
+        error_log("Resolving meta fields for post ID: " . $post->ID);
         $meta = get_post_meta($post->ID);
+        error_log("Raw meta data: " . print_r($meta, true));
+        
         $result = [];
         
         foreach ($meta as $key => $values) {
+            error_log("Processing meta key: {$key}");
             if ($this->shouldSkipMetaField($key)) {
+                error_log("Skipping meta key: {$key}");
                 continue;
             }
             
@@ -54,7 +57,7 @@ abstract class AbstractGraphQLType {
             }
         }
         
-        wp_cache_set($cache_key, $result, '', $this->config['cache_ttl']);
+        error_log("Final result: " . print_r($result, true));
         return $result;
     }
     
@@ -95,13 +98,13 @@ abstract class AbstractGraphQLType {
                 'type' => 'ID',
                 'description' => 'The ID of the object'
             ],
-            'title' => [
+           /* 'title' => [
                 'type' => 'String',
                 'description' => 'The title of the object',
                 'resolve' => function($post) {
                     return get_the_title($post->ID);
                 }
-            ],
+            ],*/
             'featuredImage' => [
                 'type' => 'MediaItem',
                 'description' => 'Featured image for the object',

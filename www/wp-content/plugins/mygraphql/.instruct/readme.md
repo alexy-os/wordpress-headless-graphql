@@ -328,6 +328,70 @@ Example queries for retrieving data:
 }
 ```
 
+### 3. All query pages and posts
+
+```graphql
+{
+  pages(first: 10) {
+    nodes {
+      id
+      pageId
+      date
+      title
+      content
+      featuredImage {
+        node {
+          id
+          sourceUrl
+          altText
+          caption
+        }
+      }
+      pageFields {
+        key
+        value
+      }
+    }
+  }
+  posts(first: 10) {
+    nodes {
+      id
+      postId
+      date
+      title
+      content
+      excerpt
+      categories {
+        nodes {
+          id
+          categoryId
+          name
+        }
+      }
+      tags {
+        nodes {
+          id
+          tagId
+          name
+        }
+      }
+      featuredImage {
+        node {
+          id
+          sourceUrl
+          altText
+          caption
+        }
+      }
+      postFields {
+        key
+        value
+      }
+    }
+  }
+}
+```
+
 ## Configuration
 
 ### 1. Type Configuration
