@@ -4,7 +4,6 @@ wp-cli.phar
 nginx/
 *.bat
 *.sql
-*.sh
 *.log
 
 # plugins
