@@ -1,2 +1,7 @@
 .manual/
 .docs/
+wp-cli.phar
+nginx/
+*.bat
+*.sql
+*.sh

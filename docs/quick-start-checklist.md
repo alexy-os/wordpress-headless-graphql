@@ -222,6 +222,31 @@ wp rewrite flush
 - Use: `http://localhost/wp-headless/console/`
 - Check credentials: admin / secure_password_2024
 
+#### Problem: "Database connection error (2054) auth_gssapi_client"
+**Solution:**
+MariaDB is using GSSAPI authentication which PHP doesn't support. Fix it by:
+
+1. Connect to MariaDB as admin:
+```bash
+mysql -u root -p
+```
+
+2. Change authentication method:
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+3. Or create a new user:
+```sql
+CREATE USER 'wpuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+GRANT ALL PRIVILEGES ON wordpress_headless.* TO 'wpuser'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+4. Update `wp-config.php` with new credentials if needed.
+
 ---
 
 ## Next Steps
