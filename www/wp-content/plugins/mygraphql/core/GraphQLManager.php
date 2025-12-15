@@ -1,6 +1,9 @@
 <?php
 namespace MYGraphQL;
 
+use MYGraphQL\Auth\JWTManager;
+use MYGraphQL\Admin\TokenPage;
+
 class GraphQLManager {
     private array $types = [];
     private static ?self $instance = null;
@@ -16,6 +19,24 @@ class GraphQLManager {
         $this->registerMetaFieldType();
         $this->registerTypes();
         $this->registerInterfaces();
+        $this->initAuth();
+        $this->initAdmin();
+    }
+    
+    /**
+     * Initialize JWT authentication
+     */
+    private function initAuth(): void {
+        JWTManager::getInstance();
+    }
+    
+    /**
+     * Initialize admin pages
+     */
+    private function initAdmin(): void {
+        if (is_admin()) {
+            new TokenPage();
+        }
     }
     
     private function registerTypes(): void {
