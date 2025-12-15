@@ -2,6 +2,15 @@
 
 A minimal WordPress theme designed to work as a headless CMS with GraphQL support and enhanced security features. This theme serves as a backend for JAMstack applications.
 
+## 🚀 Quick Start with WP-CLI
+
+For fast setup and management, see our [WP-CLI documentation](docs/README.md):
+
+- **[Quick Setup Script](docs/quick-setup.sh)** - Automated installation
+- **[WP-CLI Guide](docs/wp-cli-guide.md)** - Complete usage manual
+- **[Examples](docs/wp-cli-examples.md)** - Command examples
+- **[Checklist](docs/quick-start-checklist.md)** - Step-by-step setup guide
+
 ## Features
 
 ### Headless Mode
