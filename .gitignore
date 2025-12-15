@@ -5,3 +5,9 @@ nginx/
 *.bat
 *.sql
 *.sh
+*.log
+
+# plugins
+wp-graphql/
+classic-editor/
+classic-widgets/
